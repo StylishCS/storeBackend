@@ -30,7 +30,7 @@ async function loginController(req, res) {
         //secure: true,
         domain: "localhost",
         secure: true,
-        sameSite: true
+        sameSite: false
       })
       .json({ user: userWithoutPassword._doc, token: token });
     // return res
