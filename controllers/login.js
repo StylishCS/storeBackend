@@ -23,8 +23,15 @@ async function loginController(req, res) {
     delete userWithoutPassword._doc.password;
     return res
       .status(200)
-      .cookie("token", token)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV == "production"
+      })
       .json({ user: userWithoutPassword._doc, token: token });
+    // return res
+    //   .status(200)
+    //   .cookie("token", token)
+    //   .json({ user: userWithoutPassword._doc, token: token });
   } catch (error) {
     console.log(error);
     return res.status(500).send("INTERNAL SERVER ERROR");
@@ -48,7 +55,10 @@ async function currentUser(req, res) {
 
 async function logout(req, res) {
   try {
-    res.cookie("token", "").json("logged out");
+    res.cookie("token", "logout", {
+      httpOnly: true,
+      expires: new Date(Date.now())
+    }).json("logged out");
   } catch (error) {
     return res.status(500).send("INTERNAL SERVER ERROR");
   }
