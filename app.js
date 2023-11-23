@@ -3,8 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var cookieSession = require("cookie-session");
-const session = require('express-session');
+var expressCookie = require("express-cookie");
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -23,23 +22,18 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Failed..", err));
 
 var app = express();
-app.set("trust proxy", 1);
+
 app.use(
-  cookieSession({
-    name: "session",
-    keys: ["session"],
-    sameSite: "none",
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
   })
-  );
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-    })
-    );
-  app.use(session({
-    cookie: {sameSite: "none"}
-  }));
+);
+
+app.use(expressCookie({
+  sameSite: true,
+}));
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

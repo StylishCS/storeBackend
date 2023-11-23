@@ -29,7 +29,8 @@ async function loginController(req, res) {
         //secure: process.env.NODE_ENV === "production",
         //secure: true,
         domain: "localhost",
-        secure: false,
+        secure: true,
+        sameSite: true
       })
       .json({ user: userWithoutPassword._doc, token: token });
     // return res
