@@ -52,7 +52,7 @@ async function todaysSellings(req, res) {
 }
 async function daySellings(req, res) {
   try {
-    const request = new Date("2023-11-22");
+    const request = new Date(req.params.date);
     const today = new Date(request);
     console.log(today);
     const startOfDay = new Date(
