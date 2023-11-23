@@ -27,8 +27,8 @@ async function loginController(req, res) {
         //httpOnly: true,
         //expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         //secure: process.env.NODE_ENV === "production",
-        secure: true,
-        sameSite: 'none',
+        //secure: true,
+        domain: "localhost"
       })
       .json({ user: userWithoutPassword._doc, token: token });
     // return res
