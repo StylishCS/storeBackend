@@ -1,0 +1,120 @@
+const { Product } = require("../models/Product");
+const { Invoice } = require("../models/Invoice");
+const cloudinary = require("../utils/cloudinary");
+const path = require("path");
+
+async function addProduct(req, res) {
+  try {
+    let product;
+    if (req.file) {
+      const media = await cloudinary.uploader.upload(
+        path.resolve("./uploads", req.file.filename),
+        {
+          folder: "products",
+        }
+      );
+      product = new Product({
+        labelId: req.body.labelId,
+        name: req.body.name,
+        category: req.body.category,
+        netPrice: req.body.netPrice,
+        sellPrice: req.body.sellPrice,
+        stock: req.body.stock,
+        image: media.secure_url,
+      });
+    } else {
+      product = new Product({
+        labelId: req.body.labelId,
+        name: req.body.name,
+        category: req.body.category,
+        netPrice: req.body.netPrice,
+        sellPrice: req.body.sellPrice,
+        stock: req.body.stock,
+      });
+    }
+    await product.save();
+    return res.status(200).json("success");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("INTERNAL SERVER ERROR");
+  }
+}
+
+async function getProducts(req, res) {
+  try {
+    let products = await Product.find();
+    if (!products) {
+      return res.status(404).json("No Products found");
+    }
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(500).json("INTERNAL SERVER ERROR");
+  }
+}
+
+async function getCatProd(req, res) {
+  try {
+    let products = await Product.find({ category: req.params.category });
+    if (!products) {
+      return res.status(404).json("No Products found");
+    }
+    return res.status(200).json(products);
+  } catch (error) {
+    return res.status(500).json("INTERNAL SERVER ERROR");
+  }
+}
+
+async function getCategories(req, res) {
+  try {
+    const categories = await Product.distinct("category");
+    if (!categories) {
+      return res.status(404).json("No Products found");
+    }
+    return res.status(200).json(categories);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("INTERNAL SERVER ERROR");
+  }
+}
+
+async function checkout(req, res) {
+  try {
+    let cart = req.body;
+    let discount = cart.discount;
+    let total = cart.discountedTotal;
+    let netPrice = 0;
+    delete cart.discount;
+    delete cart.discountedTotal;
+    let productsArray = [];
+    for (var item in cart) {
+      let product = await Product.findById(cart[item].product._id);
+      if (!product) {
+        return res.status(400).json("something went wrong");
+      }
+      netPrice += product.netPrice;
+      product.stock = product.stock - cart[item].quantity;
+      await product.save();
+      productsArray.push(cart[item].product);
+    }
+    const invoice = new Invoice({
+      products: productsArray,
+      totalPrice: total,
+      netPrice: netPrice,
+      discount: discount ? discount : 0,
+      profit: total - netPrice,
+    });
+    await invoice.save();
+    return res.status(200).json("ok");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("INTERNAL SERVER ERROR");
+  }
+}
+
+module.exports = {
+  addProduct,
+  getProducts,
+  getCategories,
+  getCatProd,
+  checkout,
+};
