@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cookieSession = require("cookie-session");
+const session = require('express-session');
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -23,18 +24,22 @@ mongoose
 
 var app = express();
 app.set("trust proxy", 1);
-app.use(cookieSession({
-  name:"session",
-  keys: ["session"],
-  sameSite: "none"
-}));
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    withCredentials: true
+  cookieSession({
+    name: "session",
+    keys: ["session"],
+    sameSite: "none",
   })
-);
+  );
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+    );
+  app.use(session({
+    cookie: {sameSite: "none"}
+  }));
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -45,7 +50,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
