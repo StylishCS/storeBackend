@@ -23,7 +23,11 @@ async function loginController(req, res) {
     delete userWithoutPassword._doc.password;
     return res
       .status(200)
-      .cookie("token", token)
+      .cookie("token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 3*24*60*60*1000),
+        secure: process.env.NODE_ENV === "production",
+      })
       .json({ user: userWithoutPassword._doc, token: token });
     // return res
     //   .status(200)
