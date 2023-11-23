@@ -24,7 +24,7 @@ async function loginController(req, res) {
     return res
       .status(200)
       .cookie("token", token, {
-        httpOnly: true,
+        //httpOnly: true,
         expires: new Date(Date.now() + 3*24*60*60*1000),
         // secure: process.env.NODE_ENV === "production",
       })
