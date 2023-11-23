@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var cookieSession = require("cookie-session");
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -21,7 +22,11 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Failed..", err));
 
 var app = express();
-app.enable("trust proxy");
+app.use("trust proxy",1);
+app.use(cookieSession({
+  name:"session",
+  sameSite: "none"
+}));
 app.use(
   cors({
     origin: "http://localhost:5173",
