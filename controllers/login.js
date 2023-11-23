@@ -25,7 +25,7 @@ async function loginController(req, res) {
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV == "production"
+        secure: process.env.NODE_ENV == "production",
       })
       .json({ user: userWithoutPassword._doc, token: token });
     // return res
@@ -46,7 +46,20 @@ async function currentUser(req, res) {
     }
     jwt.verify(token, process.env.JWT_SECRET_KEY, {}, (err, decoded) => {
       if (err) throw error;
-      res.json(decoded);
+      const token = jwt.sign(
+        { _id: decoded._id, email: decoded.email },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn: process.env.JWT_EXPIRATION,
+        }
+      );
+      res
+        .status(200)
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV == "production",
+        })
+        .json(decoded);
     });
   } catch (error) {
     return res.status(500).send("INTERNAL SERVER ERROR");
@@ -55,10 +68,12 @@ async function currentUser(req, res) {
 
 async function logout(req, res) {
   try {
-    res.cookie("token", "logout", {
-      httpOnly: true,
-      expires: new Date(Date.now())
-    }).json("logged out");
+    res
+      .cookie("token", "logout", {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+      })
+      .json("logged out");
   } catch (error) {
     return res.status(500).send("INTERNAL SERVER ERROR");
   }
