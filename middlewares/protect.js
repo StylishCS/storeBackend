@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 async function auth(req, res, next) {
   try {
-    //const token = req.header("Authorization");
     const token = req.cookies.token;
     if (!token) {
       return res
@@ -15,6 +14,7 @@ async function auth(req, res, next) {
       process.env.JWT_SECRET_KEY,
       (err, decoded) => {
         if (err) {
+          console.log(err);
           verify = err;
         }
         req.user = decoded;
