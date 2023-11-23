@@ -22,9 +22,10 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Failed..", err));
 
 var app = express();
-app.use("trust proxy",1);
+app.set("trust proxy", 1);
 app.use(cookieSession({
   name:"session",
+  keys: ["session"],
   sameSite: "none"
 }));
 app.use(
