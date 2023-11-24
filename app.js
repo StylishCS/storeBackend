@@ -26,9 +26,10 @@ var app = express();
 app.use(bodyParser.json({ limit: "2000kb" }));
 //https://deploy-test-five-lake.vercel.app
 app.use((req, res, next) => {
+  const origin = req.headers.origin;
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "*"
+    origin
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
