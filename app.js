@@ -25,7 +25,7 @@ mongoose
 var app = express();
 app.use(bodyParser.json({ limit: "2000kb" }));
 //https://deploy-test-five-lake.vercel.app
-app.use((req, res, next) => {
+app.all("*",(req, res, next) => {
   const origin = req.headers.origin;
   res.setHeader(
     "Access-Control-Allow-Origin",
