@@ -26,7 +26,10 @@ var app = express();
 app.use(bodyParser.json({ limit: "2000kb" }));
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://deploy-test-five-lake.vercel.app"
+  );
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -39,7 +42,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
