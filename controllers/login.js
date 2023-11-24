@@ -90,10 +90,11 @@ async function currentUser(req, res) {
 async function logout(req, res) {
   try {
     res
-      .cookie("token", "logout", {
-        httpOnly: true,
-        expires: new Date(Date.now()),
-      })
+      .status(200)
+      .setHeader(
+        "Set-Cookie",
+        `token=logout; Path=/; HttpOnly; Secure; SameSite=None`
+      )
       .json("logged out");
   } catch (error) {
     return res.status(500).send("INTERNAL SERVER ERROR");
