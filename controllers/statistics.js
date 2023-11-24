@@ -213,8 +213,24 @@ async function getInvoice(req, res) {
   try {
     const invoice = await Invoice.findById(req.params.id);
     if (!invoice) return res.status(404).json("INTERNAL SERVER ERROR");
-    return res.status(200).json(invoice);
+    const formattedData = {
+      ...invoice._doc,
+      createdAt: invoice.createdAt.toLocaleString("en-US", {
+        timeZone: "UTC", // Adjust timezone as needed
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      }),
+    };
+    const modifiedInvoice = { ...invoice };
+    modifiedInvoice._doc.date = formattedData.createdAt;
+    return res.status(200).json(modifiedInvoice._doc);
   } catch (error) {
+    console.log(error);
     return res.status(500).json("INTERNAL SERVER ERROR");
   }
 }
@@ -330,9 +346,6 @@ async function thisYearInvoices(req, res) {
     return res.status(500).json("INTERNAL SERVER ERROR");
   }
 }
-
-
-
 
 module.exports = {
   totalSellings,
