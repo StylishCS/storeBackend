@@ -10,7 +10,7 @@ async function addProduct(req, res) {
     if (req.file) {
       console.log("flag");
       const media = await cloudinary.uploader.upload(
-        path.resolve("./uploads", req.file.filename),
+        path.resolve("./tmp", req.file.filename),
         {
           folder: "products",
         }

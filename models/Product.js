@@ -27,7 +27,8 @@ const ProductSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: "/src/assets/prodImage.png",
+      default:
+        "https://res.cloudinary.com/dehopk28l/image/upload/v1700271148/samples/ecommerce/accessories-bag.jpg",
     },
   },
   { timestamps: true }
