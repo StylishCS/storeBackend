@@ -66,7 +66,7 @@ async function currentUser(req, res) {
       );
       res
         .status(200)
-        .res.setHeader(
+        .setHeader(
           "Set-Cookie",
           `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`
         )
