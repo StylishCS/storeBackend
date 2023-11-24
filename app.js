@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressCookie = require("express-cookie");
+var bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -22,6 +23,7 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Failed..", err));
 
 var app = express();
+app.use(bodyParser.json({ limit: "2000kb" }));
 
 app.use(
   cors({
