@@ -21,18 +21,24 @@ async function loginController(req, res) {
     );
     const userWithoutPassword = { ...user };
     delete userWithoutPassword._doc.password;
-    return res
-      .status(200)
-      .cookie("token", token, {
-        //httpOnly: true,
-        //expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        //secure: process.env.NODE_ENV === "production",
-        //secure: true,
-        domain: "localhost",
-        secure: true,
-        sameSite: false
-      })
-      .json({ user: userWithoutPassword._doc, token: token });
+    return (
+      res
+        .status(200)
+        .setHeader(
+          "Set-Cookie",
+          `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`
+        )
+        // .cookie("token", token, {
+        //   //httpOnly: true,
+        //   //expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        //   //secure: process.env.NODE_ENV === "production",
+        //   //secure: true,
+        //   domain: "localhost",
+        //   secure: true,
+        //   sameSite: false
+        // })
+        .json({ user: userWithoutPassword._doc, token: token })
+    );
     // return res
     //   .status(200)
     //   .cookie("token", token)
@@ -60,18 +66,23 @@ async function currentUser(req, res) {
       );
       res
         .status(200)
-        .cookie("token", token, {
-          //httpOnly: true,
-          //expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-          //secure: process.env.NODE_ENV === "production",
-          //secure: true,
-          domain: "localhost",
-          secure: true,
-          sameSite: false,
-        })
+        .res.setHeader(
+          "Set-Cookie",
+          `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`
+        )
+        // .cookie("token", token, {
+        //   //httpOnly: true,
+        //   //expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        //   //secure: process.env.NODE_ENV === "production",
+        //   //secure: true,
+        //   domain: "localhost",
+        //   secure: true,
+        //   sameSite: false,
+        // })
         .json(decoded);
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).send("INTERNAL SERVER ERROR");
   }
 }
