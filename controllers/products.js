@@ -3,18 +3,28 @@ const { Invoice } = require("../models/Invoice");
 const cloudinary = require("../utils/cloudinary");
 const path = require("path");
 
+const multer = require("multer");
+const fileUpload = multer();
+// const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
+
 async function addProduct(req, res) {
   try {
-    console.log(req.file);
     let product;
     if (req.file) {
-      console.log("flag");
-      const media = await cloudinary.uploader.upload(
-        path.resolve("./tmp", req.file.filename),
-        {
-          folder: "products",
-        }
-      );
+      let streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          let stream = cloudinary.uploader.upload_stream((error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          });
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+      let result = await streamUpload(req);
       product = new Product({
         labelId: req.body.labelId,
         name: req.body.name,
@@ -22,7 +32,7 @@ async function addProduct(req, res) {
         netPrice: req.body.netPrice,
         sellPrice: req.body.sellPrice,
         stock: req.body.stock,
-        image: media.secure_url,
+        image: result.secure_url,
       });
     } else {
       product = new Product({

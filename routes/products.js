@@ -13,11 +13,16 @@ const {
 const auth = require("../middlewares/protect");
 const upload = require("../utils/uploadImage");
 
+const multer = require("multer");
+const fileUpload = multer();
+const cloudinary = require("cloudinary").v2;
+const streamifier = require("streamifier");
+
 router.use(auth);
 
 router.get("/all", getProducts);
 router.get("/product/:id", getProduct);
-router.post("/add", upload.single("image"), addProduct);
+router.post("/add", fileUpload.single("image"), addProduct);
 router.get("/categories", getCategories);
 router.get("/categories/:category", getCatProd);
 router.post("/checkout", checkout);

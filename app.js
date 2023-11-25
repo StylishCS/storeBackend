@@ -5,10 +5,10 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressCookie = require("express-cookie");
 var bodyParser = require("body-parser");
-
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -25,12 +25,11 @@ mongoose
 var app = express();
 app.use(bodyParser.json({ limit: "2000kb" }));
 //https://deploy-test-five-lake.vercel.app
-app.all("*",(req, res, next) => {
+app.all("*", (req, res, next) => {
   const origin = req.headers.origin;
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin
-  );
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -43,6 +42,7 @@ app.all("*",(req, res, next) => {
     next();
   }
 });
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
